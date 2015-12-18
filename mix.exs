@@ -28,6 +28,8 @@ defmodule ChockABlock.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [{:httpoison, "~> 0.8.0"},
-     {:jsx, "~> 2.0"}]
+     {:exvcr, "~> 0.3.3", only: :test},
+     {:exjsx, "~> 3.2.0"},
+    ]
   end
 end

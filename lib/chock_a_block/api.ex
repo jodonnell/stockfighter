@@ -11,7 +11,7 @@ defmodule ChockABlock.Api do
 
   def place_an_order(account, venue, stock, price, qty, direction, order_type) do
     post("/venues/#{venue}/stocks/#{stock}/orders",
-         :jsx.encode(%{
+         JSX.encode(%{
                "account": account,
                "venue": venue,
                "stock": stock,
@@ -62,7 +62,7 @@ defmodule ChockABlock.Api do
     |> get_info
   end
 
-  defp handle_response(%HTTPoison.Response{status_code: 200, body: body}), do: {:ok, :jsx.decode(body) }
+  defp handle_response(%HTTPoison.Response{status_code: 200, body: body}), do: {:ok, JSX.decode(body) }
 
   defp api_url_base do
     Application.get_env(:chock_a_block, :api_url_base)
