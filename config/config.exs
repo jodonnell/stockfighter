@@ -3,6 +3,7 @@
 use Mix.Config
 
 config :chock_a_block, api_key: System.get_env("STOCKFIGHTER_API_KEY")
+config :chock_a_block, api_url_base: "https://api.stockfighter.io/ob/api"
 
 
 # This configuration is loaded before any dependency and is restricted
