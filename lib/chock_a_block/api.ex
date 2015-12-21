@@ -1,4 +1,13 @@
 defmodule ChockABlock.Api do
+  def zow do
+    worker = Task.async(fn -> get_some() end)
+    Task.await(worker)
+  end
+
+  def get_some() do
+    stocks_on_a_venue("TESTEX")
+  end
+
   def stocks_on_a_venue(venue) do
     "/venues/#{venue}/stocks"
     |> get
@@ -10,15 +19,15 @@ defmodule ChockABlock.Api do
   end
 
   def place_an_order(account, venue, stock, price, qty, direction, order_type) do
-    post("/venues/#{venue}/stocks/#{stock}/orders",
-         JSX.encode(%{
-               "account": account,
-               "venue": venue,
-               "stock": stock,
-               "qty": qty,
-               "price": price,
-               "direction": direction,
-               "orderType": order_type }))
+    {:ok, json} = JSX.encode(%{
+          "account": account,
+          "venue": venue,
+          "stock": stock,
+          "qty": qty,
+          "price": price,
+          "direction": direction,
+          "orderType": order_type })
+    post("/venues/#{venue}/stocks/#{stock}/orders", json)
   end
 
   def quote_for_stock(venue, stock) do
@@ -31,14 +40,14 @@ defmodule ChockABlock.Api do
     |> get
   end
 
-  def cancel_order(venue, stock, order) do
-    "/venues/#{venue}/stocks/#{stock}/orders/#{order}"
-    |> delete
-  end
-
   def status_for_all_orders(venue, account) do
     "/venues/#{venue}/accounts/#{account}/orders"
     |> get
+  end
+
+  def cancel_order(venue, stock, order) do
+    "/venues/#{venue}/stocks/#{stock}/orders/#{order}"
+    |> delete
   end
 
   defp post(url, body) do
@@ -78,6 +87,7 @@ defmodule ChockABlock.Api do
   end
 
   defp get_info({:ok, list}) do
-    list
+    {:ok, thing} = list
+    thing
   end
 end
