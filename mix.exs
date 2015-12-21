@@ -14,7 +14,7 @@ defmodule ChockABlock.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :httpoison]]
+    [applications: [:logger, :httpoison, :tzdata]]
   end
 
   # Dependencies can be Hex packages:
@@ -30,6 +30,7 @@ defmodule ChockABlock.Mixfile do
     [{:httpoison, "~> 0.8.0"},
      {:exvcr, "~> 0.6.1", only: :test},
      {:exjsx, "~> 3.2.0"},
+     {:timex, "~> 1.0.0-rc4"}
     ]
   end
 end
