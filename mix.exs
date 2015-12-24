@@ -1,4 +1,4 @@
-defmodule ChockABlock.Mixfile do
+defmodule StockFighter.Mixfile do
   use Mix.Project
 
   def project do

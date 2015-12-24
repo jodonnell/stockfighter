@@ -8,7 +8,12 @@ defmodule OrdersTest do
                                %{"ts" => "2014-12-20T15:43:08.307871852Z", "open" => true},
                                %{"ts" => "2013-12-20T15:43:08.307871852Z", "open" => false}]}
 
-    assert ChockABlock.Orders.oldest_open_order(test_data) == %{"ts" => "2014-12-19T15:43:08.307871852Z", "open" => true}
+    assert StockFighter.Orders.oldest_open_order(test_data) == %{"ts" => "2014-12-19T15:43:08.307871852Z", "open" => true}
+
+    test_data = %{"orders" => [%{"ts" => "2013-12-20T15:43:08.307871852Z", "open" => false}]}
+
+    assert StockFighter.Orders.oldest_open_order(test_data) == nil
+
   end
 
   test "get_filled_quantity" do
@@ -17,7 +22,7 @@ defmodule OrdersTest do
                                %{"totalFilled" => 300},
                                %{"totalFilled" => 400}]}
 
-    assert ChockABlock.Orders.get_filled_quantity(test_data) == 1000
+    assert StockFighter.Orders.get_filled_quantity(test_data) == 1000
   end
 
 end

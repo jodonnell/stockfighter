@@ -1,4 +1,4 @@
-defmodule ChockABlock.Api do
+defmodule StockFighter.Api do
   def zow do
     worker = Task.async(fn -> get_some() end)
     Task.await(worker)

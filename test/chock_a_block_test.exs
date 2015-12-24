@@ -1,2 +1,2 @@
-defmodule ChockABlockTest do
+defmodule StockFighterTest do
 end

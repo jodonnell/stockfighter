@@ -1,0 +1,2 @@
+defmodule StockFighter do
+end

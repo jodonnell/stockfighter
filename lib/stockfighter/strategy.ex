@@ -1,4 +1,4 @@
-defmodule ChockABlock.Strategy do
+defmodule StockFighter.Strategy do
 
 
   def buy(amount, account, venue, stock) do
@@ -10,16 +10,17 @@ defmodule ChockABlock.Strategy do
   end
 
   def _buy(_, amount, account, venue, stock) do
-    ChockABlock.Api.quote_for_stock(venue, stock)
+    StockFighter.Api.quote_for_stock(venue, stock)
     |> make_bid_for_last_quote(account, venue, stock)
-    |> get_id
 
-    orders = ChockABlock.Api.status_for_all_orders(venue, account)
+    orders = StockFighter.Api.status_for_all_orders(venue, account)
 
-    oo = ChockABlock.Orders.oldest_open_order(orders)
-    ChockABlock.Api.cancel_order(venue, stock, oo["id"])
+    oo = StockFighter.Orders.oldest_open_order(orders)
+    if oo != nil do
+      StockFighter.Api.cancel_order(venue, stock, oo["id"])
+    end
 
-    quantity = ChockABlock.Orders.get_filled_quantity(orders)
+    quantity = StockFighter.Orders.get_filled_quantity(orders)
     amount_left = amount - quantity
     IO.puts "Amount purchased: #{quantity}"
     IO.puts "Amount left: #{amount_left}"
@@ -30,7 +31,11 @@ defmodule ChockABlock.Strategy do
   def make_bid_for_last_quote(last_quote, account, venue, stock) do
     last = last_quote["last"]
     IO.puts "Last quote: $#{last / 100}"
-    ChockABlock.Api.place_an_order(account, venue, stock, last - 5, 10000, "buy", "limit")
+
+    :random.seed(:erlang.now())
+    buy = :random.uniform(2200 + 400)
+    response = StockFighter.Api.place_an_order(account, venue, stock, last - 10, buy, "buy", "limit")
+    IO.puts response["price"]
   end
 
   def get_id(order) do

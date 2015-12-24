@@ -1,4 +1,4 @@
-# ChockABlock
+# StockFighter
 
 **TODO: Add description**
 

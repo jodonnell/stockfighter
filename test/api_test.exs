@@ -8,7 +8,7 @@ defmodule ApiTest do
 
   test "stocks on a venue" do
     use_cassette "stocks_on_a_venue" do
-      assert ChockABlock.Api.stocks_on_a_venue(@test_exchange) ==
+      assert StockFighter.Api.stocks_on_a_venue(@test_exchange) ==
         %{"ok" => true, "symbols" => [%{"name" => "Foreign Owned Occluded Bridge Architecture Resources", "symbol" => @test_stock}]}
       end
   end
@@ -16,7 +16,7 @@ defmodule ApiTest do
 
   test "place an order" do
     use_cassette "place_an_order" do
-      assert ChockABlock.Api.place_an_order(@test_account, @test_exchange, @test_stock, 100, 100, "buy", "limit") ==
+      assert StockFighter.Api.place_an_order(@test_account, @test_exchange, @test_stock, 100, 100, "buy", "limit") ==
         %{"account" => @test_account, "direction" => "buy", "fills" => [], "id" => 5606, "ok" => true, "open" => true,
           "orderType" => "limit", "originalQty" => 100, "price" => 100, "qty" => 100, "symbol" => @test_stock, "totalFilled" => 0,
           "ts" => "2015-12-21T00:55:21.321969216Z", "venue" => @test_exchange}
@@ -26,7 +26,7 @@ defmodule ApiTest do
 
   test "orderbook_for_stock" do
     use_cassette "orderbook_for_stock" do
-      response = ChockABlock.Api.orderbook_for_stock(@test_exchange, @test_stock)
+      response = StockFighter.Api.orderbook_for_stock(@test_exchange, @test_stock)
 
       [first_ask | _] = response["asks"]
       [first_bid | _] = response["bids"]
@@ -40,7 +40,7 @@ defmodule ApiTest do
 
   test "quote for a stock" do
     use_cassette "quote_for_stock" do
-      assert ChockABlock.Api.quote_for_stock(@test_exchange, @test_stock) ==
+      assert StockFighter.Api.quote_for_stock(@test_exchange, @test_stock) ==
             %{"ask" => 2000040, "askDepth" => 580, "askSize" => 580, "bid" => 2000000, "bidDepth" => 147091, "bidSize" => 522,
               "last" => 2000040, "lastSize" => 10, "lastTrade" => "2015-12-21T00:29:38.571545316Z", "ok" => true,
               "quoteTime" => "2015-12-21T00:55:20.88646802Z", "symbol" => @test_stock, "venue" => @test_exchange}
@@ -49,8 +49,8 @@ defmodule ApiTest do
 
   test "status_for_order" do
     use_cassette "status_for_order" do
-      response = ChockABlock.Api.place_an_order(@test_account, @test_exchange, @test_stock, 100, 100, "buy", "limit")
-      assert ChockABlock.Api.status_for_order(response["id"], @test_exchange, @test_stock) ==
+      response = StockFighter.Api.place_an_order(@test_account, @test_exchange, @test_stock, 100, 100, "buy", "limit")
+      assert StockFighter.Api.status_for_order(response["id"], @test_exchange, @test_stock) ==
         %{"account" => @test_account, "direction" => "buy", "fills" => [], "id" => 5658, "ok" => true, "open" => true,
           "orderType" => "limit", "originalQty" => 100, "price" => 100, "qty" => 100, "symbol" => @test_stock, "totalFilled" => 0,
           "ts" => "2015-12-21T01:22:04.694908193Z", "venue" => @test_exchange}
@@ -59,7 +59,7 @@ defmodule ApiTest do
 
   test "status_for_all_orders" do
     use_cassette "status_for_all_orders" do
-      response = ChockABlock.Api.status_for_all_orders(@test_exchange, @test_account)
+      response = StockFighter.Api.status_for_all_orders(@test_exchange, @test_account)
       [first_order | _] = response["orders"]
       assert response["ok"] == true
       assert response["venue"] == @test_exchange
@@ -71,8 +71,8 @@ defmodule ApiTest do
 
   test "cancel_order" do
     use_cassette "cancel_order" do
-      response = ChockABlock.Api.place_an_order(@test_account, @test_exchange, @test_stock, 100, 100, "buy", "limit")
-      assert ChockABlock.Api.cancel_order(@test_exchange, @test_stock, response["id"]) ==
+      response = StockFighter.Api.place_an_order(@test_account, @test_exchange, @test_stock, 100, 100, "buy", "limit")
+      assert StockFighter.Api.cancel_order(@test_exchange, @test_stock, response["id"]) ==
         %{"account" => @test_account, "direction" => "buy", "fills" => [], "id" => 5657, "ok" => true, "open" => false,
              "orderType" => "limit", "originalQty" => 100, "price" => 100, "qty" => 0, "symbol" => @test_stock, "totalFilled" => 0,
              "ts" => "2015-12-21T01:21:08.491009244Z", "venue" => @test_exchange}
