@@ -15,12 +15,12 @@ defmodule StockFighter.Strategy do
 
     orders = StockFighter.Api.status_for_all_orders(venue, account)
 
-    oo = StockFighter.Orders.oldest_open_order(orders)
+    oo = StockFighter.Orders.oldest_open_order(orders["orders"])
     if oo != nil do
       StockFighter.Api.cancel_order(venue, stock, oo["id"])
     end
 
-    quantity = StockFighter.Orders.get_filled_quantity(orders)
+    quantity = StockFighter.Orders.get_filled_quantity(orders["orders"])
     amount_left = amount - quantity
     IO.puts "Amount purchased: #{quantity}"
     IO.puts "Amount left: #{amount_left}"
@@ -37,10 +37,4 @@ defmodule StockFighter.Strategy do
     response = StockFighter.Api.place_an_order(account, venue, stock, last - 10, buy, "buy", "limit")
     IO.puts response["price"]
   end
-
-  def get_id(order) do
-    order["id"]
-  end
-
-
 end
