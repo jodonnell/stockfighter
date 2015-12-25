@@ -2,8 +2,8 @@
 # and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
 
-config :chock_a_block, api_key: System.get_env("STOCKFIGHTER_API_KEY")
-config :chock_a_block, api_url_base: "https://api.stockfighter.io/ob/api"
+config :stockfighter, api_key: System.get_env("STOCKFIGHTER_API_KEY")
+config :stockfighter, api_url_base: "https://api.stockfighter.io/ob/api"
 
 
 # This configuration is loaded before any dependency and is restricted
@@ -14,11 +14,11 @@ config :chock_a_block, api_url_base: "https://api.stockfighter.io/ob/api"
 
 # You can configure for your application as:
 #
-#     config :chock_a_block, key: :value
+#     config :stockfighter, key: :value
 #
 # And access this configuration in your application as:
 #
-#     Application.get_env(:chock_a_block, :key)
+#     Application.get_env(:stockfighter, :key)
 #
 # Or configure a 3rd-party app:
 #

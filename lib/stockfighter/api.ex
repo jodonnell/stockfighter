@@ -74,11 +74,11 @@ defmodule StockFighter.Api do
   defp handle_response(%HTTPoison.Response{status_code: 200, body: body}), do: {:ok, JSX.decode(body) }
 
   defp api_url_base do
-    Application.get_env(:chock_a_block, :api_url_base)
+    Application.get_env(:stockfighter, :api_url_base)
   end
 
   defp api_header do
-    ["X-Starfighter-Authorization": Application.get_env(:chock_a_block, :api_key)]
+    ["X-Starfighter-Authorization": Application.get_env(:stockfighter, :api_key)]
   end
 
   defp get_symbols({:ok, list}) do
