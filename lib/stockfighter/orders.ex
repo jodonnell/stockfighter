@@ -1,6 +1,10 @@
 defmodule StockFighter.Orders do
   use Timex
 
+  def profit(orders, current_value) do
+    net_asset_value(orders, current_value) + current_cash(orders)
+  end
+
   def open(orders) do
     Enum.filter(orders, fn(order) -> order["open"] == true end)
   end
@@ -11,7 +15,7 @@ defmodule StockFighter.Orders do
     end)
   end
 
-  def current_net_assets(orders) do
+  def current_cash(orders) do
     Enum.map(orders, fn(order) ->
       sum_list(Enum.map(order["fills"], fn(fill) ->
         totalFilled = flip_sign_on_buy(order["direction"], fill["qty"])
@@ -19,6 +23,10 @@ defmodule StockFighter.Orders do
       end))
     end)
     |> sum_list
+  end
+
+  def net_asset_value(orders, current_value) do
+    get_position(orders) * current_value
   end
 
   def oldest_open_order(orders) do

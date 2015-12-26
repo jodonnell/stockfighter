@@ -52,7 +52,7 @@ defmodule OrdersTest do
     end
   end
 
-  test "current_net_assets" do
+  test "current_cash" do
     test_data = [%{"direction" => "buy", "fills" => [ %{"price" => 1, "qty" => 1} ]},
                  %{"direction" => "buy", "fills" => [ %{"price" => 1, "qty" => 1}, %{"price" => 2, "qty" => 2} ]},
                  %{"direction" => "buy", "fills" => [ %{"price" => 3, "qty" => 3} ]},
@@ -60,7 +60,35 @@ defmodule OrdersTest do
                  %{"direction" => "sell", "fills" => [ %{"price" => 1, "qty" => 1}, %{"price" => 2, "qty" => 2} ]},
                  %{"direction" => "sell", "fills" => [ %{"price" => 3, "qty" => 3} ]} ]
 
-    assert StockFighter.Orders.current_net_assets(test_data) == 0
+    assert StockFighter.Orders.current_cash(test_data) == 0
   end
+
+  test "net_asset_value" do
+    test_data = [%{"totalFilled" => 10, "direction" => "buy"},
+                 %{"totalFilled" => 20, "direction" => "buy"},
+                 %{"totalFilled" => 30, "direction" => "sell"},
+                 %{"totalFilled" => 40, "direction" => "buy"}]
+
+    assert StockFighter.Orders.get_position(test_data) == 40
+    assert StockFighter.Orders.net_asset_value(test_data, 10) == 400
+
+    #test_data = [%{"totalFilled" => 1, "direction" => "sell"}]
+
+    # assert StockFighter.Orders.get_position(test_data) == -1
+    # assert StockFighter.Orders.net_asset_value(test_data, 10) == 400
+
+  end
+
+  test "profit" do
+    test_data = [%{"totalFilled" => 1, "direction" => "buy", "fills" => [ %{"price" => 1, "qty" => 1} ]},
+                 %{"totalFilled" => 3, "direction" => "buy", "fills" => [ %{"price" => 1, "qty" => 1}, %{"price" => 2, "qty" => 2} ]},
+                 %{"totalFilled" => 3, "direction" => "buy", "fills" => [ %{"price" => 3, "qty" => 3} ]},
+                 %{"totalFilled" => 1, "direction" => "sell", "fills" => [ %{"price" => 1, "qty" => 1} ]}]
+
+    assert StockFighter.Orders.current_cash(test_data) == -14
+    assert StockFighter.Orders.net_asset_value(test_data, 10) == 60
+    assert StockFighter.Orders.profit(test_data, 10) == 60 - 14
+  end
+
 
 end

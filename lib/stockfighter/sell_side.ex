@@ -11,20 +11,34 @@ defmodule StockFighter.SellSide do
     orders = StockFighter.Api.status_for_all_orders(venue, account)
     StockFighter.Orders.cancel_all(orders["orders"])
 
-    StockFighter.Api.quote_for_stock(venue, stock)
-    |> make_bid_for_last_quote(account, venue, stock)
+    last_quote = StockFighter.Api.quote_for_stock(venue, stock)
+    last = last_quote["last"]
 
-    amount_made = StockFighter.Orders.current_net_assets(orders["orders"])
-    IO.puts "Amount made: #{amount_made / 1000}"
+    amount_made = StockFighter.Orders.profit(orders["orders"], last)
+    IO.puts "Profit: #{amount_made / 100}"
+
+    position = StockFighter.Orders.get_position(orders["orders"])
+    make_bid_for_last_quote(position, last_quote, account, venue, stock)
+
     IO.puts ""
     _buy(amount_made / 1000, amount, account, venue, stock)
   end
 
-  def make_bid_for_last_quote(last_quote, account, venue, stock) do
-    last = last_quote["last"]
-    IO.puts "Last quote: $#{last / 100}"
+  def make_bid_for_last_quote(position, last_quote, account, venue, stock) do
+    buy_quantity = 100
+    sell_quantity = 100
 
-    StockFighter.Api.place_an_order(account, venue, stock, last - 10, 100, "buy", "limit")
-    StockFighter.Api.place_an_order(account, venue, stock, last + 10, 100, "sell", "limit")
+    if position > 300 do
+      buy_quantity = 20
+    end
+
+    if position < -300 do
+      sell_quantity = 20
+    end
+
+    middle = div(last_quote["ask"] - last_quote["bid"], 2) + last_quote["bid"]
+
+    StockFighter.Api.place_an_order(account, venue, stock, middle - 10, buy_quantity, "buy", "limit")
+    StockFighter.Api.place_an_order(account, venue, stock, middle + 10, sell_quantity, "sell", "limit")
   end
 end
