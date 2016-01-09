@@ -2,6 +2,7 @@ defmodule ApiTest do
   use ExUnit.Case, async: false
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
+
   @test_exchange "TESTEX"
   @test_stock "FOOBAR"
   @test_account "EXB123456"
@@ -42,8 +43,19 @@ defmodule ApiTest do
     use_cassette "quote_for_stock" do
       assert StockFighter.Api.quote_for_stock(@test_exchange, @test_stock) ==
             %{"ask" => 2000040, "askDepth" => 580, "askSize" => 580, "bid" => 2000000, "bidDepth" => 147091, "bidSize" => 522,
-              "last" => 2000040, "lastSize" => 10, "lastTrade" => "2015-12-21T00:29:38.571545316Z", "ok" => true,
-              "quoteTime" => "2015-12-21T00:55:20.88646802Z", "symbol" => @test_stock, "venue" => @test_exchange}
+              "last" => 2000040, "lastSize" => 10,
+              "lastTrade" =>  %Timex.DateTime{calendar: :gregorian, day: 21, hour: 0,
+               minute: 29, month: 12, ms: 572, second: 38,
+               timezone: %Timex.TimezoneInfo{abbreviation: "UTC", from: :min,
+                full_name: "UTC", offset_std: 0, offset_utc: 0, until: :max},
+               year: 2015},
+              "ok" => true,
+              "quoteTime" => %Timex.DateTime{calendar: :gregorian, day: 21,
+                                             hour: 0, minute: 55, month: 12, ms: 886, second: 20,
+                                             timezone: %Timex.TimezoneInfo{abbreviation: "UTC", from: :min,
+                                                                           full_name: "UTC", offset_std: 0, offset_utc: 0, until: :max},
+                                             year: 2015},
+              "symbol" => @test_stock, "venue" => @test_exchange}
     end
   end
 

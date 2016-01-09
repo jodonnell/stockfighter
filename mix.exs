@@ -30,7 +30,8 @@ defmodule StockFighter.Mixfile do
     [{:httpoison, "~> 0.8.0"},
      {:exvcr, "~> 0.6.1", only: :test},
      {:exjsx, "~> 3.2.0"},
-     {:timex, "~> 1.0.0-rc4"}
+     {:timex, "~> 1.0.0-rc4"},
+     {:socket, "~> 0.3.1"}
     ]
   end
 end

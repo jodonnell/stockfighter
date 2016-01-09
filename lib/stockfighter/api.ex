@@ -1,11 +1,12 @@
 defmodule StockFighter.Api do
-  def zow do
-    worker = Task.async(fn -> get_some() end)
-    Task.await(worker)
+  use Timex
+
+  def tickertape_for_venue(account, venue) do
+    get_stream("/ws/#{account}/venues/#{venue}/tickertape")
   end
 
-  def get_some() do
-    stocks_on_a_venue("TESTEX")
+  def tickertape_for_stock(account, venue, stock) do
+    get_stream("/ws/#{account}/venues/#{venue}/tickertape/stocks/#{stock}")
   end
 
   def stocks_on_a_venue(venue) do
@@ -33,6 +34,13 @@ defmodule StockFighter.Api do
   def quote_for_stock(venue, stock) do
     "/venues/#{venue}/stocks/#{stock}/quote"
     |> get
+    |> get_time("lastTrade")
+    |> get_time("quoteTime")
+  end
+
+  def get_time(my_quote, key) do
+    {:ok, date} = my_quote[key] |> DateFormat.parse("{ISO}")
+     %{my_quote | key => date}
   end
 
   def status_for_order(id, venue, stock) do
@@ -89,5 +97,32 @@ defmodule StockFighter.Api do
   defp get_info({:ok, list}) do
     {:ok, thing} = list
     thing
+  end
+
+  defp get_stream(path) do
+    Stream.resource(
+      fn -> get_socket(path) end,
+      &iter_socket/1,
+      fn(socket) -> Socket.Web.close(socket) end
+    )
+  end
+
+  defp get_socket(path) do
+    url = String.replace(api_url_base <> path, "https", "wss")
+    {:ok, socket} = Socket.connect(url)
+    socket
+  end
+
+  defp iter_socket(socket) do
+    case Socket.Web.recv(socket) do
+      {:ok, {:text, data}} ->
+        {[JSX.decode!(data)], socket}
+
+      {:error, msg} ->
+        {:halt, socket}
+
+      _ ->
+        iter_socket(socket)
+    end
   end
 end
