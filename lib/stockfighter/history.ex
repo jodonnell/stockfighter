@@ -1,4 +1,8 @@
 defmodule StockFighter.History do
+  def initial do
+    %{"lastTrade" => Date.from({{1950, 1, 1}, {0, 0, 0}}), "quotes" => []}
+  end
+
   def update_quotes(all_quotes, new_quote) do
     if all_quotes["lastTrade"] < new_quote["lastTrade"] do
       %{"lastTrade" => new_quote["lastTrade"], "quotes" => [new_quote | all_quotes["quotes"]]}

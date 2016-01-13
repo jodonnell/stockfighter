@@ -1,10 +1,11 @@
 defmodule StockFighter.SellSide do
   def buy(account, venue, stock) do
     { :ok, _ } = StockFighter.Ticker.start_link(account, venue)
-    _buy(account, venue, stock)
+    all_quotes = StockFighter.History.update_quotes(StockFighter.History.initial)
+    _buy(account, venue, stock, all_quotes)
   end
 
-  def _buy(account, venue, stock) do
+  def _buy(account, venue, stock, all_quotes) do
     last_quote = StockFighter.Ticker.get_quote
     if last_quote["quoteTime"] do
       IO.inspect(last_quote)
@@ -17,12 +18,14 @@ defmodule StockFighter.SellSide do
       IO.puts "Profit: #{amount_made / 100}"
 
       position = StockFighter.Orders.get_position(orders["orders"])
-      make_bid_for_last_quote(position, last_quote, account, venue, stock)
+
+      all_quotes = StockFighter.History.update_quotes(last_quote)
+      average = StockFighter.History.get_local_average(all_quotes)
 
       IO.puts ""
-      _buy(account, venue, stock)
+      _buy(account, venue, stock, all_quotes)
     else
-      _buy(account, venue, stock)
+      _buy(account, venue, stock, all_quotes)
     end
   end
 
